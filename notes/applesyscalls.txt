@@ -1,0 +1,38 @@
+Trying to find info about ABI:
+"If the class is INTEGER, the next available register of the sequence %rdi,
+%rsi, %rdx, %rcx, %r8 and %r9 is used." 
+
+* Syscall classes for 64-bit system call entry.
+ * For 64-bit users, the 32-bit syscall number is partitioned
+ * with the high-order bits representing the class and low-order
+ * bits being the syscall number within that class.
+ * The high-order 32-bits of the 64-bit syscall number are unused.
+ * All system classes enter the kernel via the syscall instruction.
+
+here are some "Classes" (they need to be shifted << 24)
+
+#define SYSCALL_CLASS_NONE	0	/* Invalid */
+#define SYSCALL_CLASS_MACH	1	/* Mach */	
+#define SYSCALL_CLASS_UNIX	2	/* Unix/BSD */ (2 << 24 = 33554432)
+#define SYSCALL_CLASS_MDEP	3	/* Machine-dependent */
+#define SYSCALL_CLASS_DIAG	4	/* Diagnostics */
+#define SYSCALL_CLASS_IPC	5	/* Mach IPC */
+
+And here are some actual syscalls:
+
+#define	SYS_syscall        0
+#define	SYS_exit           1
+#define	SYS_fork           2
+#define	SYS_read           3
+#define	SYS_write          4
+#define	SYS_open           5
+#define	SYS_close          6
+#define	SYS_wait4          7
+
+
+So for exit you get
+movl $0x2000001, %eax # system call $1 with $0x2000000 offset
+33554432 + 1 = 33554433
+
+because it's a "unix class" syscalls and its opcode is 1
+
