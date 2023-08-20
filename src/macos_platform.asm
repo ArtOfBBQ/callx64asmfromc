@@ -1,7 +1,6 @@
 bits 64
 
-section   .data
-message:  db        "Hello, World", 10 
+; section   .data
 
 section .text
 
