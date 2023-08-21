@@ -1,6 +1,5 @@
-# COMPILER_OPTIONS="-s -mmacosx-version-min=10.6 -nostartfiles -nostdlib -O0 -x c -std=c99"
-COMPILER_OPTIONS="-g -O0 -x c -std=c99"
-LINKER_OPTIONS="-arch x86_64 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem"
+COMPILER_OPTIONS="-g -mmacosx-version-min=10.6 -nostdlib -O0 -x c -std=c99"
+LINKER_OPTIONS="-e _start -arch x86_64 -L /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem"
 
 C_SOURCE_FILES="src/main.c"
 
