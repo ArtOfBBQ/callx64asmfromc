@@ -1,7 +1,7 @@
 #define uint32_t unsigned int
 #define uint64_t unsigned int
 
-extern void tok_printf(char * input, uint32_t input_size);
+extern void tok_print(char * input, uint32_t input_size);
 extern void tok_exit(void);
 extern uint64_t tok_time(void);
 
@@ -18,6 +18,11 @@ static void uint_to_string(
     char * recipient,
     uint64_t input)
 {
+    if (recipient == 0)
+    {
+        return;
+    }
+    
     if (input == 0) {
         recipient[0] = '0';
         recipient[1] = '\0';
@@ -55,7 +60,7 @@ static void uint_to_string(
     }
 }
 
-static uint32_t strlen(char * str) {
+static uint32_t tok_strlen(char * str) {
     uint32_t return_value = 0;
     while (str[return_value] != '\0') {
         return_value += 1;
@@ -64,7 +69,7 @@ static uint32_t strlen(char * str) {
     return return_value + 1;
 }
 
-static void strcat(char * recipient, char * input) {
+static void tok_strcat(char * recipient, char * input) {
     uint32_t i = 0;
     while (recipient[i] != '\0') {
         i++;
@@ -78,55 +83,84 @@ static void strcat(char * recipient, char * input) {
     recipient[i] = '\0';
 }
 
-static uint32_t draw_frame() {
-    char message[1024];
+static char message[1024];
+static char time_as_str[256];
+
+static void draw_frame() {
     message[0] = '\0';
     
-    strcat(
+    tok_strcat(
         message,
         ANSI_CURSOR_HOME);
-    strcat(
+    tok_strcat(
         message,
         ANSI_ERASE_CURSOR_TO_END);
-    strcat(
+    tok_strcat(
         message,
         "Time stamps since app start: ");
-    strcat(
+    tok_strcat(
         message,
         ANSI_BOLD_RED);
     
     uint64_t timestamps_elapsed = app_start_time - tok_time();
-    char time_as_str[128];
     time_as_str[0] = '\0';
-    
     uint_to_string(
         /* char * recipient: */
             time_as_str,
         /* uint64_t input: */
             timestamps_elapsed);
-    
-    strcat(
+    tok_strcat(
         message,
         time_as_str);
-    strcat(
+    tok_strcat(
         message,
         ANSI_RESET_STYLES_AND_COLORS);
     
-    tok_printf(
+    tok_print(
         message,
-        strlen(message));
+        tok_strlen(message));
 }
 
 // entry point of our app, replaces main()
-void start() {
+int _start(void) {
     
     app_start_time = tok_time();
+    uint64_t frames_drawn = 0;
     
-    for (uint32_t _ = 0; _ < 300000; _++) {
+    while (tok_time() - app_start_time < 1000000) {
         draw_frame();
+        frames_drawn += 1;
     }
     
-    tok_printf("\n300000 TUI frames were drawn.", 30);
+    tok_print("** \n", 5);
+    
+    frames_drawn = 123;
+    char frames_as_str[128];
+    uint_to_string(
+        /* char * recipient: */
+            frames_as_str,
+        /* uint64_t input: */
+            frames_drawn);
+
+    tok_print(frames_as_str, tok_strlen(frames_as_str));
+    
+    tok_print(
+        " TUI frames were drawn. Timestamps elapsed: ",
+        50);
+    
+    uint64_t timestamps_elapsed =
+        app_start_time - tok_time();
+    time_as_str[0] = '\0';
+    uint_to_string(
+        /* char * recipient: */
+            time_as_str,
+        /* uint64_t input: */
+            timestamps_elapsed);
+    tok_strcat(
+        time_as_str,
+        "\n");
+    
+    tok_print(time_as_str, tok_strlen(time_as_str));
     
     tok_exit();
 }
