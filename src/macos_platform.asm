@@ -21,3 +21,10 @@ _tok_exit:
     mov ebx, 0            ; exit code 0
     syscall
 
+GLOBAL _tok_time
+_tok_time:
+    rdtscp
+    shl rdx, 32
+    or rax, rdx
+    ret
+
