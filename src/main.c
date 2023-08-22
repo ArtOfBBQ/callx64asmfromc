@@ -1,5 +1,5 @@
 #define uint32_t unsigned int
-#define uint64_t unsigned int
+#define uint64_t unsigned long int
 
 extern void tok_print(char * input, uint32_t input_size);
 extern void tok_exit(void);
@@ -35,7 +35,9 @@ static void uint_to_string(
     
     uint64_t decimal = 1;
     uint64_t input_div_dec = input;
-    while (input_div_dec > 0 && decimal < 10000001) {
+    uint64_t max_decimal = 1;
+    max_decimal <<= 62;
+    while (input_div_dec > 0 && decimal < max_decimal) {
         uint64_t isolated_num = input % (decimal * 10);
         isolated_num /= decimal;
         recipient[i] = (char)('0' + isolated_num);
@@ -122,45 +124,33 @@ static void draw_frame() {
 }
 
 // entry point of our app, replaces main()
-int _start(void) {
+void _start(void) {
     
     app_start_time = tok_time();
     uint64_t frames_drawn = 0;
+    uint64_t max_wait = 1;
+    max_wait <<= 34;
     
-    while (tok_time() - app_start_time < 1000000) {
+    while ((tok_time() - app_start_time) < max_wait) {
         draw_frame();
         frames_drawn += 1;
     }
     
-    tok_print("** \n", 5);
+    tok_print("\n\n\n", 5);
     
-    frames_drawn = 123;
     char frames_as_str[128];
     uint_to_string(
         /* char * recipient: */
             frames_as_str,
         /* uint64_t input: */
             frames_drawn);
-
+    
     tok_print(frames_as_str, tok_strlen(frames_as_str));
-    
     tok_print(
-        " TUI frames were drawn. Timestamps elapsed: ",
-        50);
+        " TUI frames were drawn.",
+        24);
     
-    uint64_t timestamps_elapsed =
-        app_start_time - tok_time();
-    time_as_str[0] = '\0';
-    uint_to_string(
-        /* char * recipient: */
-            time_as_str,
-        /* uint64_t input: */
-            timestamps_elapsed);
-    tok_strcat(
-        time_as_str,
-        "\n");
-    
-    tok_print(time_as_str, tok_strlen(time_as_str));
+    tok_print("\n.....", 6);
     
     tok_exit();
 }

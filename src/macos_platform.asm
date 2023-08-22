@@ -4,8 +4,8 @@ bits 64
 
 section .text
 
-GLOBAL _tok_printf
-_tok_printf:
+GLOBAL _tok_print
+_tok_print:
     mov eax, 33554436     ; write to stdout
     mov r8,  rdi          ; stash rdi which we're about to overwrite
     mov edi, 1            ; STDOUT file descriptor is 1
@@ -20,9 +20,12 @@ _tok_exit:
     ; mov eax, 0x2000001  ; same instruction as above
     mov ebx, 0            ; exit code 0
     syscall
+    ret
 
 GLOBAL _tok_time
 _tok_time:
+    or rax, rax
+    or rdx, rdx
     rdtscp
     shl rdx, 32
     or rax, rdx
