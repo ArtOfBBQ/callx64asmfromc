@@ -12,17 +12,19 @@ SECTION .text
 GLOBAL tok_print
 tok_print:
     mov rcx, rdi
-    mov eax, 4   ; kernel opcode 4 for SYS_WRITE
-    mov ebx, 1   ; write to STDOUT
+    mov rax, 1   ; kernel opcode 4 for SYS_WRITE
+    mov rdi, 1   ; write to STDOUT
     mov rdx, rsi ; number of bytes to write
-    int 80h
+    mov rsi, rcx ; pointer to string
+    syscall
     ret
 
 GLOBAL tok_exit
 tok_exit:    
-    mov eax,1 ; kernel opcode 1 for SYS_EXIT
-    mov ebx,0
+    mov rax, 1 ; kernel opcode 1 for SYS_EXIT
+    mov rbx, 0
     int 80h
+    ret
 
 GLOBAL tok_time
 tok_time:

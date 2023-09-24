@@ -5,22 +5,13 @@ extern void tok_print(char * input, uint32_t input_size);
 extern void tok_exit(void);
 extern uint64_t tok_time(void);
 
-static uint64_t app_start_time = 0;
-
-#define ANSI_RESET_STYLES_AND_COLORS "\x1b[0m"
-#define ANSI_BOLD_RED                "\x1b[1;31m"
-
-#define ANSI_CURSOR_HOME             "\x1b[H"
-#define ANSI_ERASE_SCREEN            "\x1b[2J"
-#define ANSI_ERASE_CURSOR_TO_END     "\x1b[0J"
-
 static void uint_to_string(
     char * recipient,
     uint64_t input)
 {
     if (recipient == 0)
     {
-        return;
+        return; // input string is NULL
     }
     
     if (input == 0) {
@@ -85,72 +76,24 @@ static void tok_strcat(char * recipient, char * input) {
     recipient[i] = '\0';
 }
 
-static char message[1024];
-static char time_as_str[256];
-
-static void draw_frame() {
-    message[0] = '\0';
-    
-    tok_strcat(
-        message,
-        ANSI_CURSOR_HOME);
-    tok_strcat(
-        message,
-        ANSI_ERASE_CURSOR_TO_END);
-    tok_strcat(
-        message,
-        "Time stamps since app start: ");
-    tok_strcat(
-        message,
-        ANSI_BOLD_RED);
-    
-    uint64_t timestamps_elapsed = app_start_time - tok_time();
-    time_as_str[0] = '\0';
-    uint_to_string(
-        /* char * recipient: */
-            time_as_str,
-        /* uint64_t input: */
-            timestamps_elapsed);
-    tok_strcat(
-        message,
-        time_as_str);
-    tok_strcat(
-        message,
-        ANSI_RESET_STYLES_AND_COLORS);
-    
-    tok_print(
-        message,
-        tok_strlen(message));
-}
-
 // entry point of our app, replaces main()
 void _start(void) {
     
-    app_start_time = tok_time();
-    uint64_t frames_drawn = 0;
-    uint64_t max_wait = 1;
-    max_wait <<= 34;
+    uint64_t app_start_time = tok_time();
     
-    while ((tok_time() - app_start_time) < max_wait) {
-        draw_frame();
-        frames_drawn += 1;
-    }
+    uint64_t app_runtime = tok_time() - app_start_time;
     
-    tok_print("\n\n\n", 5);
-    
-    char frames_as_str[128];
+    tok_print("app ran for: ", 14);
+    char app_runtime_str[512];
+    app_runtime_str[0] = '0';
+    app_runtime_str[1] = '\n';
     uint_to_string(
         /* char * recipient: */
-            frames_as_str,
+            app_runtime_str,
         /* uint64_t input: */
-            frames_drawn);
-    
-    tok_print(frames_as_str, tok_strlen(frames_as_str));
-    tok_print(
-        " TUI frames were drawn.",
-        24);
-    
-    tok_print("\n.....", 6);
+            app_runtime);
+    tok_print(app_runtime_str, tok_strlen(app_runtime_str));
+    tok_print("\n", 2);
     
     tok_exit();
 }

@@ -1,5 +1,7 @@
-COMPILER_OPTIONS="-g"
-# COMPILER_OPTIONS="-s"
+# COMPILER_OPTIONS="-g -nostartfiles -nostdlib"
+COMPILER_OPTIONS="-s -nostartfiles -nostdlib"
+# COMPILER_OPTIONS="-Wall -g -fno-stack-protector"
+# COMPILER_OPTIONS="-g -fno-stack-protector"
 
 mkdir -p build
 rm build/*.o > /dev/null
@@ -17,14 +19,13 @@ fi
 # you can copy asm files directly and gdb will use them as debug symbols
 cp src/linux_platform.asm build/platform.asm
 
-if gcc -O0 -c $COMPILER_OPTIONS -nostartfiles -nostdlib -Wall -x c -std=c99 src/main.c -o build/main.o; then
+if gcc -lc -O0 $COMPILER_OPTIONS build/platform.o -x c -std=c99 src/main.c -o build/syscalls
+then
 echo "gcc success"
 else
 echo "gcc failed"
 exit 0
 fi
-
-ld $COMPILER_OPTIONS -nostartfiles -nostdlib build/main.o build/platform.o -o build/syscalls
 
 build/syscalls
 
