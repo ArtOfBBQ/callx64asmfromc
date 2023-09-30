@@ -1,9 +1,13 @@
+#define NULL 0
 #define uint32_t unsigned int
 #define uint64_t unsigned long int
 
-extern void tok_print(char * input, uint32_t input_size);
+extern void tok_print(
+    char * input, uint32_t input_size);
 extern void tok_exit(void);
 extern uint64_t tok_time(void);
+extern void * tok_malloc(
+    unsigned long size);
 
 static void uint_to_string(
     char * recipient,
@@ -41,8 +45,10 @@ static void uint_to_string(
     
     recipient[end_i + 1] = '\0';
     
-    // if we started with an input of -32, we should now have
-    // the resut '-' '2' '3', with start_i at '2' and end_i at '3'
+    // if we started with an input of -32, we
+    // should now have
+    // the resut '-' '2' '3', with start_i at '2' and
+    // end_i at '3'
     // we want to swap from start_i to end_i
     while (start_i < end_i) {
         char swap = recipient[start_i];
@@ -62,27 +68,25 @@ static uint32_t tok_strlen(char * str) {
     return return_value + 1;
 }
 
-static void tok_strcat(char * recipient, char * input) {
-    uint32_t i = 0;
-    while (recipient[i] != '\0') {
-        i++;
-    }
-    
-    uint32_t j = 0;
-    while (input[j] != '\0') {
-        recipient[i++] = input[j++];
-    }
-    
-    recipient[i] = '\0';
-}
-
 // entry point of our app, replaces main()
 void _start(void) {
     
     uint64_t app_start_time = tok_time();
+     
+    long heap_memory_size = 4096;
+    
+    tok_print("app start\n", 10);
+    
+    int * new_ptr = NULL;
+    new_ptr = (int *)tok_malloc(
+        /* size_t length : */
+            heap_memory_size);
+    
+    for (uint32_t i = 0; i < heap_memory_size; i++) {
+        new_ptr[i] = i;
+    }
     
     uint64_t app_runtime = tok_time() - app_start_time;
-    
     tok_print("app ran for: ", 14);
     char app_runtime_str[512];
     app_runtime_str[0] = '0';
@@ -92,8 +96,10 @@ void _start(void) {
             app_runtime_str,
         /* uint64_t input: */
             app_runtime);
-    tok_print(app_runtime_str, tok_strlen(app_runtime_str));
-    tok_print("\n", 2);
+    tok_print(
+        app_runtime_str,
+        tok_strlen(app_runtime_str));
+    tok_print(" rdtsc cycles\n", 14);
     
     tok_exit();
 }

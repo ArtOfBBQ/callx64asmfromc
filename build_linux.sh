@@ -1,5 +1,5 @@
 # COMPILER_OPTIONS="-g -nostartfiles -nostdlib"
-COMPILER_OPTIONS="-s -nostartfiles -nostdlib"
+COMPILER_OPTIONS="-Wall -s -nostartfiles -nostdlib"
 # COMPILER_OPTIONS="-Wall -g -fno-stack-protector"
 # COMPILER_OPTIONS="-g -fno-stack-protector"
 
