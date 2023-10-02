@@ -1,13 +1,8 @@
-#define NULL 0
-#define uint32_t unsigned int
-#define uint64_t unsigned long int
+#include "platform.h"
 
-extern void tok_print(
-    char * input, uint32_t input_size);
-extern void tok_exit(void);
-extern uint64_t tok_time(void);
-extern void * tok_malloc(
-    unsigned long size);
+#ifndef NULL
+#define NULL 0
+#endif
 
 static void uint_to_string(
     char * recipient,
@@ -71,16 +66,16 @@ static uint32_t tok_strlen(char * str) {
 // entry point of our app, replaces main()
 void _start(void) {
     
+    tok_print("app start\n", 10);
+    
     uint64_t app_start_time = tok_time();
      
-    long heap_memory_size = 4096;
-    
-    tok_print("app start\n", 10);
+    long heap_memory_size = 100;
     
     int * new_ptr = NULL;
     new_ptr = (int *)tok_malloc(
         /* size_t length : */
-            heap_memory_size);
+            heap_memory_size * sizeof(int));
     
     for (uint32_t i = 0; i < heap_memory_size; i++) {
         new_ptr[i] = i;
